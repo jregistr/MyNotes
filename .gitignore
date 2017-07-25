@@ -217,3 +217,4 @@ $RECYCLE.BIN/
 # End of https://www.gitignore.io/api/sbt,macos,linux,scala,angular,windows,intellij+all,webstorm+all
 
 application.conf
+public/ui
