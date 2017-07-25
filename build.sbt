@@ -1,4 +1,4 @@
-name := """List Maker"""
+name := """Play Angular Slick"""
 
 version := "2.6.x"
 

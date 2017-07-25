@@ -219,3 +219,5 @@ $RECYCLE.BIN/
 application.conf
 public/ui
 project/project/
+
+sbt-dist/bin
