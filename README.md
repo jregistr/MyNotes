@@ -1,5 +1,5 @@
-#Play Angular Slick
----
+# Play Angular Slick
+
 Minimal project configuration featuring a Scala play blackend with Slick ORM and an Angular front end.
 
 ### Usage
