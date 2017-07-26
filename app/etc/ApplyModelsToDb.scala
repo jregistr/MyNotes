@@ -4,6 +4,7 @@ import javax.inject.{Inject, Singleton}
 
 import akka.actor.ActorSystem
 import models.{Item, TodoList, User}
+import org.mindrot.jbcrypt.BCrypt
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.PostgresProfile
 import slick.jdbc.meta.MTable
@@ -25,10 +26,14 @@ class CreateTablesIfNotExist @Inject()(dbConfigProvider: DatabaseConfigProvider,
     import dbConfig._
     import profile.api._
 
+    val users = User.users
+    val todoLists = TodoList.todoLists
+    val items = Item.items
+
     val tables = List(
-      User.users,
-      TodoList.todoLists,
-      Item.items
+      users,
+      todoLists,
+      items
     )
 
     val map: Future[List[Unit]] = db.run(MTable.getTables).flatMap(tablesInDb => {

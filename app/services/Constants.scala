@@ -4,6 +4,8 @@ import play.api.libs.json._
 
 object Constants {
 
+  val AuthTokenHeader = "X-AUTH-TOKEN"
+
   def goodResult(jsonValue: JsValue): JsObject = JsObject(Seq(
     "success" -> JsBoolean(true),
     "data" -> jsonValue

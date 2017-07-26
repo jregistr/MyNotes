@@ -3,16 +3,16 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import daos.TodoListRepository
-import models.{Item, TodoList, User}
+import models.{Item, TodoList}
 import play.api.Logger
 import play.api.data.Form
-import play.api.i18n.I18nSupport
 import play.api.data.Forms._
+import play.api.i18n.I18nSupport
+import play.api.libs.json._
 import play.api.mvc._
 import services.Constants.{badResult, goodResult}
-import play.api.libs.json.Json
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TodoController @Inject()(cc: ControllerComponents,
@@ -23,8 +23,27 @@ class TodoController @Inject()(cc: ControllerComponents,
   private val internal: PartialFunction[Throwable, Result] = {
     case t: Throwable =>
       logger.error("An error occured", t)
-      InternalServerError(badResult("Internal server error", INTERNAL_SERVER_ERROR))
+      BadRequest(badResult("An error occurred during query", BAD_REQUEST))
   }
+
+  private def deleted(value: Boolean = false) = JsObject(Seq(
+    "deleted" -> JsBoolean(value)
+  ))
+
+  private implicit def pairToJson(pair: (TodoList, Seq[Item])): JsObject = pair match {
+    case (todoList, items) => JsObject(Seq(
+      "userId" -> JsNumber(todoList.userId),
+      "name" -> JsString(todoList.name),
+      "description" -> (todoList.description match {
+        case Some(desc) => JsString(desc)
+        case _ => JsNull
+      }),
+      "id" -> JsNumber(todoList.id),
+      "items" -> Json.toJson(items)
+    ))
+  }
+
+  private implicit def pairsToJson(pairs: Seq[(TodoList, Seq[Item])]): JsArray = JsArray(pairs.map(pairToJson))
 
   private val todoListForm = Form(
     mapping(
@@ -45,13 +64,54 @@ class TodoController @Inject()(cc: ControllerComponents,
   )
 
   def getForUser(userId: Long): Action[AnyContent] = Action.async {
-    todoRepo.getAllForUser(userId).map(groups => {
-      Ok(goodResult(Json.toJson(groups)))
+    todoRepo.getAllForUser(userId).map(pairs => {
+      Ok(goodResult(pairs))
     }).recover(internal)
   }
 
-//  def createTodoList(): Action[AnyContent] = Action.async {
-//
-//  }
+  def getById(id: Long): Action[AnyContent] = Action.async {
+    todoRepo.getTodoListById(id).map {
+      case Some(value) => Ok(goodResult(value))
+      case None => NotFound(badResult("Not found", NOT_FOUND))
+    }.recover(internal)
+  }
+
+  def createTodoList(): Action[AnyContent] = Action.async { implicit request =>
+    todoListForm.bindFromRequest().fold(badForm => {
+      Future {
+        BadRequest(badResult(badForm.errorsAsJson, BAD_REQUEST))
+      }
+    }, todoListData => {
+      todoRepo.createTodoList(todoListData)
+        .map(createdTodoList => Ok(goodResult(Json.toJson(createdTodoList))))
+        .recover(internal)
+    })
+  }
+
+  def deleteTodoList(id: Long): Action[AnyContent] = Action.async {
+    todoRepo.deleteTodoList(id).map {
+      case true => Ok(goodResult(deleted(true)))
+      case _ => BadRequest(badResult(deleted(), BAD_REQUEST))
+    }
+  }
+
+  def addItem(): Action[AnyContent] = Action.async { implicit request =>
+    itemForm.bindFromRequest().fold(badForm => {
+      Future {
+        BadRequest(badResult(badForm.errorsAsJson, BAD_REQUEST))
+      }
+    }, data => {
+      todoRepo.addItem(data)
+        .map(createdItem => Ok(goodResult(Json.toJson(createdItem))))
+        .recover(internal)
+    })
+  }
+
+  def deleteItem(itemId: Long, listId: Long): Action[AnyContent] = Action.async {
+    todoRepo.deleteItem(itemId, listId).map {
+      case true => Ok(goodResult(deleted(true)))
+      case _ => BadRequest(badResult(deleted(), BAD_REQUEST))
+    }
+  }
 
 }

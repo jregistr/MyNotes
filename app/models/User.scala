@@ -5,7 +5,8 @@ import slick.jdbc.PostgresProfile.api._
 import slick.lifted.ProvenShape
 
 case class User(email: String, password: String,
-                firstName: Option[String] = None, lastName: Option[String] = None, id: Long = -1) extends Model
+                firstName: Option[String] = None,
+                lastName: Option[String] = None, id: Long = -1) extends Model
 
 object User {
 
@@ -40,5 +41,6 @@ class UsersTable(tag: Tag) extends Table[User](tag, "users") {
 
   def lastName: Rep[Option[String]] = column[Option[String]]("last_name")
 
-  override def * : ProvenShape[User] = (email, password, firstName, lastName, id) <> ((User.apply _).tupled, User.unapply)
+  override def * : ProvenShape[User] = (email, password, firstName, lastName, id) <> ((User.apply _).tupled,
+    User.unapply)
 }

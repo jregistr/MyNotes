@@ -26,10 +26,6 @@ class TodoListRepository @Inject()(system: ActorSystem, dbConfigProvider: Databa
         db.run(items.filter(_.todoListId === todo.id).result).map(items => todo -> items)
       })
     }).flatMap(l => Future.sequence(l))
-
-    temp.map(seqs => {
-      seqs.foreach(println)
-    })
     temp
   }
 
@@ -51,8 +47,8 @@ class TodoListRepository @Inject()(system: ActorSystem, dbConfigProvider: Databa
     db.run(query).map(tuple => (TodoList.apply _).tupled(tuple))
   }
 
-  def deleteTodoList(userId: Long, listId: Long): Future[Boolean] = {
-    val query = todoLists.filter(_.userId === userId).filter(_.id === listId).delete
+  def deleteTodoList(listId: Long): Future[Boolean] = {
+    val query = todoLists.filter(_.id === listId).delete
     db.run(query).map(_ > 0)
   }
 

@@ -3,12 +3,25 @@
 # ~~~~
 
 # Home page
-GET         /                     controllers.Application.index
-GET         /api/users            controllers.AuthController.all
-GET         /api/users/:id        controllers.AuthController.getById(id: Long)
-POST        /api/users/           controllers.AuthController.create
 
-GET         /api/todolist            controllers.TodoController.getForUser(userId: Long)
+
+GET           /                          controllers.Application.index(any = "none")
+POST          /auth/register/            controllers.AuthController.register()
+POST          /auth/login/               controllers.AuthController.login()
+POST          /auth/logout               controllers.AuthController.logout()
+
+# Api endpoints
+GET           /api/users                 controllers.AuthController.all
+
+GET           /api/todolist              controllers.TodoController.getForUser(userId: Long)
+GET           /api/todolist/:id          controllers.TodoController.getById(id: Long)
+POST          /api/todolist/             controllers.TodoController.createTodoList
+DELETE        /api/todolist/:id          controllers.TodoController.deleteTodoList(id: Long)
+
+POST          /api/items/                controllers.TodoController.addItem()
+DELETE        /api/items/:itemId/        controllers.TodoController.deleteItem(itemId: Long, listId:Long)
 
         # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file         controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file              controllers.Assets.versioned(path="/public", file: Asset)
+
+GET           /*any                      controllers.Application.index(any)

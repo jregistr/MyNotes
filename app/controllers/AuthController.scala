@@ -4,11 +4,12 @@ import javax.inject.{Inject, Singleton}
 
 import daos.UserRepository
 import models.User
+import org.mindrot.jbcrypt.BCrypt
 import play.api.Logger
 import play.api.data.Forms._
 import play.api.data._
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
+import play.api.libs.json.{JsBoolean, JsObject, Json}
 import play.api.mvc._
 import services.Constants.{badResult, goodResult}
 
@@ -25,6 +26,10 @@ class AuthController @Inject()(cc: ControllerComponents, userRepo: UserRepositor
 
   private val logger = Logger(getClass)
 
+  private val welcome = JsObject(Seq(
+    "authorized" -> JsBoolean(true)
+  ))
+
   private val userForm = Form(
     mapping(
       "email" -> email,
@@ -35,37 +40,50 @@ class AuthController @Inject()(cc: ControllerComponents, userRepo: UserRepositor
     )(User.apply)(User.unapply)
   )
 
+  case class LoginDetails(email: String, password: String)
+
+  private val loginForm = Form(
+    mapping(
+      "email" -> nonEmptyText(),
+      "password" -> nonEmptyText()
+    )(LoginDetails.apply)(LoginDetails.unapply)
+  )
+
   def all: Action[AnyContent] = Action.async {
     userRepo.getAll.map(users => {
       Ok(Json.toJson(users))
     }).recover(internal)
   }
 
-  def getById(id: Long): Action[AnyContent] = Action.async {
-    userRepo.getById(id).map {
-      case Some(user) => Ok(goodResult(Json.toJson(user)))
-      case None => NotFound(badResult("No such user exists", NOT_FOUND))
-    }.recover(internal)
+  def register(): Action[AnyContent] = Action.async { implicit request =>
+    userForm.bindFromRequest().fold(badForm => Future {
+      BadRequest(badResult(badForm.errorsAsJson, BAD_REQUEST))
+    }, userData => {
+      userRepo.create(userData).map {
+        case Some(user) => Ok(goodResult(welcome)).withSession(request.session + ("username" -> user.email))
+        case None => BadRequest(badResult("Check your credentials", BAD_REQUEST))
+      }
+    })
   }
 
-  def create(): Action[AnyContent] = {
-    val bad = BadRequest(badResult("Unable to make user with such fields", BAD_REQUEST))
-    Action.async { implicit request =>
-      userForm.bindFromRequest().fold(formWithErrors => {
-        Future {
-          BadRequest(badResult(formWithErrors.errorsAsJson, BAD_REQUEST))
+  def login(): Action[AnyContent] = Action.async { implicit request =>
+    val unauth = Unauthorized(badResult("No matching credentials found", UNAUTHORIZED))
+
+    loginForm.bindFromRequest().fold(badForm => Future {
+      Unauthorized(badResult(badForm.errorsAsJson, UNAUTHORIZED))
+    }, userData => {
+      userRepo.getByEmail(userData.email).map {
+        case Some(fromDb) => BCrypt.checkpw(userData.password, fromDb.password) match {
+          case false => unauth
+          case _ => Ok(goodResult(welcome)).withSession(request.session + ("username" -> fromDb.email))
         }
-      },
-        userData => {
-          userRepo.create(userData).map {
-            case Some(user) => Ok(goodResult(Json.toJson(user)))
-            case None => bad
-          }.recover { case t: Throwable =>
-            logger.error("Error during create", t)
-            BadRequest(badResult(t.getMessage, BAD_REQUEST))
-          }
-        })
-    }
+        case None => unauth
+      }
+    })
+  }
+
+  def logout(): Action[AnyContent] = Action { implicit request =>
+    Ok("bye").withNewSession
   }
 
 }
