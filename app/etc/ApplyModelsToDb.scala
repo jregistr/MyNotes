@@ -46,6 +46,15 @@ class CreateTablesIfNotExist @Inject()(dbConfigProvider: DatabaseConfigProvider,
     })
 
     Await.ready(map, 45 seconds)
+
+    val other = db.run(users.result).map(seq => {
+      if(seq.isEmpty) {
+        val query = users += User("someemail@email.com", "password")
+        db.run(query)
+      }
+    })
+
+    Await.result(other, 20 seconds)
   }
 
 }
