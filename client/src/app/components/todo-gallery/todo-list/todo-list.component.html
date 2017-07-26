@@ -1,13 +1,12 @@
-<!--<h4 *ngIf="todoList !== null">{{todoList.name}}</h4>-->
 <div *ngIf="todoList != null" class="todo-list">
   <div class="todo-list-header">
     <strong>{{todoList.name}}</strong>
-    <i class="fa fa-trash"></i>
+    <i class="fa fa-trash" (click)="onTrashClicked()"></i>
   </div>
   <br>
   <div class="todo-list-body">
     <span>Items in List</span>
-    <h1>{{todoList.items.length}}</h1>
+    <h1>{{todoList.items ? todoList.items.length : 0}}</h1>
   </div>
   <div class="todo-list-footer">
     <button class="btn btn-block btn-default"><i class="fa fa-eye"></i> View</button>

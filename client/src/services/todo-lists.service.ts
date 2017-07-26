@@ -22,4 +22,27 @@ export class TodoListsService {
       .catch(error => Observable.throw("Server Err"))
   }
 
+  createTodoList(todoList: TodoList): Observable<TodoList> {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+    const params = new URLSearchParams();
+    params.append("userId", todoList.userId.toString());
+    params.append("name", todoList.name);
+    params.append("description", todoList.description);
+    const body = params.toString();
+
+    return this.http.post("/api/todolist/", body, {headers: headers})
+      .map(res => res.json().data)
+      .catch(err => Observable.throw("Erro creating new todolist"));
+  }
+
+  deleteTodoList(todoList: TodoList): Observable<boolean> {
+    return this.http.delete(`/api/todolist/${todoList.id}`)
+      .map(res => res.json().data)
+      .catch(err => {
+        console.error(err);
+        return Observable.throw("Error with delete");
+      })
+  }
+
 }

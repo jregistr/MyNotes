@@ -1,9 +1,9 @@
 export class TodoList {
   constructor(public userId: number,
               public name: string,
-              description: string,
+              public description: string,
               public items: Item[],
-              id: number) {
+              public id: number) {
   }
 }
 
