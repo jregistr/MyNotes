@@ -11,7 +11,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PersonController @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext)
+class Application @Inject()(cc: ControllerComponents)(implicit ec: ExecutionContext)
   extends AbstractController(cc) with I18nSupport {
 
   def index = Action {

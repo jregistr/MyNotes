@@ -1,4 +1,4 @@
-name := """Play Angular Slick"""
+name := """List Maker"""
 
 version := "2.6.x"
 
@@ -11,6 +11,8 @@ libraryDependencies += "com.typesafe.play" %% "play-slick" %  "3.0.0-M5"
 //libraryDependencies += "com.typesafe.play" %% "play-slick-evolutions" % "3.0.0-M5"
 libraryDependencies += "com.h2database" % "h2" % "1.4.194"
 libraryDependencies += "org.postgresql" % "postgresql" % "42.1.3"
+libraryDependencies += "org.mindrot" % "jbcrypt" % "0.4"
+
 
 libraryDependencies += specs2 % Test
 

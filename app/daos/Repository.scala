@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import play.api.db.slick.DatabaseConfigProvider
 import slick.basic.DatabaseConfig
 import slick.jdbc.PostgresProfile
-
 import scala.concurrent.ExecutionContext
 
 abstract class Repository (system: ActorSystem, dbConfigProvider: DatabaseConfigProvider) {

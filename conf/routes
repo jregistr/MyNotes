@@ -3,9 +3,10 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.PersonController.index
-#POST    /person                     controllers.PersonController.addPerson
-#GET     /persons                    controllers.PersonController.getPersons
+GET        /                        controllers.Application.index
+GET        /api/users               controllers.AuthController.all
+GET        /api/users/:id           controllers.AuthController.getById(id: Long)
+GET        /api/users/create/        controllers.AuthController.create
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+GET        /assets/*file            controllers.Assets.versioned(path="/public", file: Asset)

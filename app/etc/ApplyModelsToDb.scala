@@ -3,7 +3,7 @@ package etc
 import javax.inject.{Inject, Singleton}
 
 import akka.actor.ActorSystem
-import models.UsersTable
+import models.{Item, TodoList, User}
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.PostgresProfile
 import slick.jdbc.meta.MTable
@@ -26,7 +26,9 @@ class CreateTablesIfNotExist @Inject()(dbConfigProvider: DatabaseConfigProvider,
     import profile.api._
 
     val tables = List(
-      TableQuery[UsersTable]
+      User.users,
+      TodoList.todoLists,
+      Item.items
     )
 
     val map: Future[List[Unit]] = db.run(MTable.getTables).flatMap(tablesInDb => {
