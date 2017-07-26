@@ -57,8 +57,8 @@ class TodoListRepository @Inject()(system: ActorSystem, dbConfigProvider: Databa
     db.run(query).map(tuple => (Item.apply _).tupled(tuple))
   }
 
-  def deleteItem(itemId: Long, listId: Long): Future[Boolean] = {
-    val query = items.filter(_.todoListId === listId).filter(_.id === itemId).delete
+  def deleteItem(itemId: Long): Future[Boolean] = {
+    val query = items.filter(_.id === itemId).delete
     db.run(query).map(_ > 0)
   }
 

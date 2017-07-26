@@ -9,6 +9,7 @@
     <h1>{{todoList.items ? todoList.items.length : 0}}</h1>
   </div>
   <div class="todo-list-footer">
-    <button class="btn btn-block btn-default"><i class="fa fa-eye"></i> View</button>
+    <a [routerLink]="['/list']" [queryParams]="{id:todoList.id}" class="btn btn-block btn-default"><i class="fa fa-eye"></i>
+      View</a>
   </div>
 </div>

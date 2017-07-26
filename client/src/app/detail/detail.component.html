@@ -1,3 +1,46 @@
-<p>
-  detail works!
-</p>
+<div *ngIf="todoList !== null">
+
+  <div *ngIf="!addMode">
+    <div class="row" style="margin-bottom: 10px">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <a class="btn btn-default" [routerLink]="['']"><i class="fa fa-arrow-left"></i>Back To My Lists</a>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <button (click)="onAddNewItemClicked()" class="btn btn-success"><i class="fa fa-plus-circle"></i> Add new Item</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-12 col-lg-12 col-md-12 col-sm-12">
+        <table class="table table-striped">
+          <thead>
+          <tr>
+            <th class="col-lg-7 col-md-7 col-sm-7 col-xs-7">Text</th>
+            <th class="col-lg-1 col-md-1 col-sm-1 col-xs-1"></th>
+          </tr>
+          </thead>
+          <tbody *ngIf="todoList.items">
+          <tr *ngFor="let item of todoList.items">
+            <td>{{item.text}}</td>
+            <td><i style="cursor: pointer" (click)="onTrashClick(item)" class="fa fa-trash"></i></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="addMode">
+    <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-3 hidden-xs"></div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <app-add-item-form [todoList]="todoList"></app-add-item-form>
+      </div>
+    </div>
+  </div>
+
+</div>

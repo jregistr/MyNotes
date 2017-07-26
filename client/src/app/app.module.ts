@@ -14,10 +14,11 @@ import {TodoGalleryComponent} from './components/todo-gallery/todo-gallery.compo
 import {HttpModule} from "@angular/http";
 import {CommonModule} from '@angular/common';
 import {MakeTodoFormComponent} from './components/todo-gallery/make-todo-form/make-todo-form.component';
+import { AddItemFormComponent } from './detail/add-item-form/add-item-form.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomeComponent},
-  {path: 'list/:id', component: DetailComponent},
+  {path: 'list', component: DetailComponent},
   {path: '**', component: NotfoundComponent}
 ];
 
@@ -29,7 +30,8 @@ const appRoutes: Routes = [
     DetailComponent,
     TodoListComponent,
     TodoGalleryComponent,
-    MakeTodoFormComponent
+    MakeTodoFormComponent,
+    AddItemFormComponent
   ],
   imports: [
     CommonModule,

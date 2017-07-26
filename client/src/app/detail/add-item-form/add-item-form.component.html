@@ -1,0 +1,19 @@
+<div></div>
+<div>
+  <form [formGroup]="addItemForm" (ngSubmit)="onFormSubmit()">
+    <div class="form-group">
+      <label for="mk-todo-text">Text</label>
+      <input class="form-control" type="text" max="100" id="mk-todo-text" formControlName="text"
+             placeholder="Some delicious pasta"/>
+    </div>
+    <div class="form-group">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <button [disabled]="addItemForm.invalid" class="btn btn-primary btn-block">Create New List</button>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <button type="button" (click)="onFormCancel()" class="btn btn-danger btn-block">Cancel</button>
+      </div>
+    </div>
+  </form>
+
+</div>

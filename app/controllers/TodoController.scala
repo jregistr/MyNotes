@@ -107,8 +107,8 @@ class TodoController @Inject()(cc: ControllerComponents,
     })
   }
 
-  def deleteItem(itemId: Long, listId: Long): Action[AnyContent] = Action.async {
-    todoRepo.deleteItem(itemId, listId).map {
+  def deleteItem(itemId: Long): Action[AnyContent] = Action.async {
+    todoRepo.deleteItem(itemId).map {
       case true => Ok(goodResult(deleted(true)))
       case _ => BadRequest(badResult(deleted(), BAD_REQUEST))
     }
