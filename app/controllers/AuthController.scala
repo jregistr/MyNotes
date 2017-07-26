@@ -11,6 +11,7 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc._
 import services.Constants.{badResult, goodResult}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

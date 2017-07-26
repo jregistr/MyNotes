@@ -24,12 +24,12 @@ class UserRepository @Inject()(system: ActorSystem, dbConfigProvider: DatabaseCo
 
   def create(user: User): Future[Option[User]] = {
     val hashed = BCrypt.hashpw(user.password, BCrypt.gensalt())
-    val query = (users returning users.map(table => (table.id, table.email, table.firstName, table.lastName))) += user
+    val query = (users returning users.map(table => (table.id, table.email, table.password, table.firstName, table.lastName))) += user
       .copy(password = hashed)
-    val run: Future[(Long, String, Option[String], Option[String])] = db.run(query)
+    val run: Future[(Long, String, String, Option[String], Option[String])] = db.run(query)
 
     run map {
-      case (id, email, first, last) => Some(User(email, "", first, last, id))
+      case (id, email, pass, first, last) => Some(User(email, pass, first, last, id))
     }
   }
 
